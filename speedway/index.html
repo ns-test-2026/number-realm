@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><style id="notapzoom">html,body{touch-action:manipulation}button,a,input,select,label,canvas,[role=button]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}button,.dpad,.dpad *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}</style><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Speedway"><meta name="theme-color" content="#111827"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Speedway"><meta name="theme-color" content="#111827"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><style id="notapzoom">html,body{touch-action:manipulation}button,a,input,select,label,canvas,[role=button]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}button,.dpad,.dpad *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}</style><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 
 <meta charset="utf-8">
 <title>Number Speedway</title>
@@ -1353,9 +1353,10 @@ const CHEERS=["Vroom vroom!","You got it!","Super speedy!","Nailed it!","Beep be
 const DRIVE_SAYS=["Wheee!","Beep beep!","Coming through!","Excuse me, pigeon!","Vroom!","Honk honk!","Zoom!","Which way?!","Yee-haw!","Tooot!"];
 const INTRO_LINE="Let's rev your engine and show off your math skills! Good luck out there, racer!";
 /* Recorded clips (published next to this page). If one can't play, the game falls back to the browser voice. */
+const NO_VOICE=true; // voiceovers are off: they sounded robotic on iPads
 const CLIPS={opening:"audio/opening.mp3",parade:"audio/parade.mp3"};const CLIP_EL={};
-for(const k in CLIPS){try{const a=new Audio(CLIPS[k]);a.preload="auto";CLIP_EL[k]=a}catch(e){}}
-function playClip(k){return new Promise(res=>{const a=CLIP_EL[k];if(!a||muted){res(false);return}
+for(const k in CLIPS){if(NO_VOICE)break;try{const a=new Audio(CLIPS[k]);a.preload="auto";CLIP_EL[k]=a}catch(e){}}
+function playClip(k){return new Promise(res=>{const a=CLIP_EL[k];if(NO_VOICE||!a||muted){res(false);return}
   let done=false;const fin=ok=>{if(!done){done=true;a.onended=a.onerror=null;res(ok)}};
   try{window.speechSynthesis&&window.speechSynthesis.cancel()}catch(e){}
   try{a.currentTime=0;a.volume=1;a.onended=()=>fin(true);a.onerror=()=>fin(false);const p=a.play();p&&p.catch&&p.catch(()=>fin(false))}catch(e){fin(false)}
@@ -1464,7 +1465,7 @@ function renderVoices(){
   tip.textContent="This browser only has robot-sounding voices. For a much more natural voice, open the game in Microsoft Edge or Google Chrome, or on an iPhone, iPad or Mac.";
 }
 try{window.speechSynthesis.addEventListener("voiceschanged",loadVoices)}catch(e){}
-function speakNow(text,pop){try{const s=window.speechSynthesis;if(!s||muted)return;s.cancel();
+function speakNow(text,pop){try{const s=window.speechSynthesis;if(NO_VOICE||!s||muted)return;s.cancel();
   const v=pop?pickVoice2():pickVoice(),nat=isNatural(v);
   // one sentence at a time: natural pauses, and long lessons don't get cut off
   (String(text).match(/[^.!?]+[.!?]*/g)||[String(text)]).forEach(t=>{t=t.trim();if(!t)return;
@@ -1473,11 +1474,11 @@ function speak(text){if(G.readAloud)speakNow(text)}
 /* Pop-ups, cheers, oops lines and other game fun use the second voice. */
 function speakPop(text){if(G.readAloud)speakNow(text,true)}
 /* Say a pop-up line and wait for it to finish (used before a lesson starts, so the lesson doesn't cut it off). */
-function sayPop(text){return new Promise(res=>{const s=window.speechSynthesis;if(!G.readAloud||muted||!s){res();return}
+function sayPop(text){return new Promise(res=>{const s=window.speechSynthesis;if(NO_VOICE||!G.readAloud||muted||!s){res();return}
   let done=false;const fin=()=>{if(!done){done=true;res()}};
   try{s.cancel();const v=pickVoice2(),u=new SpeechSynthesisUtterance(text);if(v){u.voice=v;u.lang=v.lang}const nat=isNatural(v);u.rate=1;u.pitch=nat?1.05:1;u.onend=fin;u.onerror=fin;liveUtterances.push(u);s.speak(u)}catch(e){fin()}
   setTimeout(fin,Math.max(2500,text.split(/\s+/).length*450))})}
-function speakQueue(text){if(!G.readAloud)return;try{const s=window.speechSynthesis;if(!s||muted)return;const v=pickVoice(),nat=isNatural(v);
+function speakQueue(text){if(NO_VOICE||!G.readAloud)return;try{const s=window.speechSynthesis;if(!s||muted)return;const v=pickVoice(),nat=isNatural(v);
   (String(text).match(/[^.!?]+[.!?]*/g)||[String(text)]).forEach(t=>{t=t.trim();if(!t)return;const u=new SpeechSynthesisUtterance(t);if(v){u.voice=v;u.lang=v.lang}u.rate=1;u.pitch=nat?1.05:1;s.speak(u)})}catch(e){}}
 
 /* =================== SETUP UI =================== */
@@ -2144,7 +2145,7 @@ function sayLine(text){
   return new Promise(res=>{
     const est=Math.max(1400,text.split(/\s+/).length*430*SLOW), s=window.speechSynthesis;
     if(!muted&&VO.ready){const keys=voiceKeys(text);if(keys){playClips(keys).then(res);return}}
-    if(muted||!s){setTimeout(res,est);return}
+    if(NO_VOICE||muted||!s){setTimeout(res,est);return}
     let done=false,started=false,fellBack=false;
     const fin=()=>{if(done)return;done=true;clearTimeout(t1);clearTimeout(t2);res()};
     const local=()=>VOICES.find(v=>v.localService)||null;
@@ -3107,6 +3108,7 @@ function toGarage(){
 $("#garageBtn").onclick=toGarage;
 $("#startBtn").onclick=startRace;
 renderSetup(); loadVoices();
+if(NO_VOICE){const ra=$("#readAloud");if(ra)ra.closest("label").style.display="none";["voice","voice2"].forEach(id=>{const e=$("#"+id);if(e){const row=e.closest(".voicerow");(row&&row.parentElement||e).style.display="none"}})}
 })();
 </script>
 

@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><style id="notapzoom">html,body{touch-action:manipulation}button,a,input,select,label,canvas,[role=button]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}button,.dpad,.dpad *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}</style><title>Number Realm</title><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Number Realm"><meta name="theme-color" content="#1a1240"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><title>Number Realm</title><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Number Realm"><meta name="theme-color" content="#1a1240"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><style id="notapzoom">html,body{touch-action:manipulation}button,a,input,select,label,canvas,[role=button]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}button,.dpad,.dpad *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}</style><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Number Realm</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -318,7 +318,7 @@ table.nbt tr.out td{opacity:.45;text-decoration:line-through}
     <div class="settings">
       <button type="button" class="toggle" id="tTimer" role="switch" aria-checked="false"><span class="sw"></span>⏱️ Timer</button>
       <button type="button" class="toggle" id="tType" role="switch" aria-checked="false"><span class="sw"></span>🔢 Number pad answers</button>
-      <button type="button" class="toggle" id="tRead" role="switch" aria-checked="false"><span class="sw"></span>🔊 Read questions</button>
+      <button type="button" class="toggle" id="tRead" role="switch" aria-checked="false" style="display:none"><span class="sw"></span>🔊 Read questions</button>
     </div>
     <footer>Timer is off unless you turn it on. Progress is saved in this browser.<br><button type="button" class="gubtn" id="grownBtn">🔒 Grown-ups</button></footer>
   </section>
@@ -1028,7 +1028,8 @@ let AC=null;
 function tone(f,d,type="sine",vol=.06,when=0){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime+when,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
 const SFX={ok(){tone(784,.12,"triangle");tone(1175,.18,"triangle",.06,.1)},no(){tone(220,.25,"sawtooth",.04)},coin(){tone(988,.08,"square",.04);tone(1319,.14,"square",.04,.08)},step(){tone(300,.03,"triangle",.02)},win(){[523,659,784,1047].forEach((f,i)=>tone(f,.2,"triangle",.07,i*.12))},hit(){tone(140,.2,"square",.06)}};
 let VOICES=[];function lv(){try{VOICES=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang))}catch(e){}}lv();try{speechSynthesis.onvoiceschanged=lv}catch(e){}
-function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);const v=VOICES.find(v=>/natural/i.test(v.name)&&/en-US/.test(v.lang))||VOICES.find(v=>/en-US/.test(v.lang))||VOICES[0];if(v){u.voice=v;u.lang=v.lang}u.rate=1;speechSynthesis.speak(u)}catch(e){}}
+function speak(t){/* voiceovers are off; only Spelling Bee words are spoken (speakSpell) */}
+function speakSpell(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);const v=VOICES.find(v=>/natural/i.test(v.name)&&/en-US/.test(v.lang))||VOICES.find(v=>/en-US/.test(v.lang))||VOICES[0];if(v){u.voice=v;u.lang=v.lang}u.rate=1;speechSynthesis.speak(u)}catch(e){}}
 
 /* ================= FX ================= */
 (function bubbles(){const b=$("#bubbles"),cols=["#448aff","#e040fb","#ffd740","#1de9b6","#ff6e40"];for(let i=0;i<16;i++){const e=document.createElement("i");const s=6+Math.random()*16;e.style.cssText=`left:${Math.random()*100}%;width:${s}px;height:${s}px;background:${cols[i%5]};animation-duration:${14+Math.random()*18}s;animation-delay:${-Math.random()*20}s`;b.appendChild(e)}})();
@@ -1129,12 +1130,12 @@ function nextQ(){if(Z.i>=TOTAL)return endQuiz();
   $("#qFb").textContent="";$("#qFb").className="feedback";
   const ask=askInto($("#qAnswers"),q,(ok,el)=>answered(ok,el));
   Z.stop=runTimer($("#qTimer"),$("#qTimerWrap"),()=>ask.timeout());
-  if(S.read||q.spell)speak(sayText(q))}
+  $("#qSay").hidden=!(q.spell&&!q.mc);if(q.spell&&!q.mc)speakSpell(sayText(q))}
 function answered(ok,el){const left=Z.stop?Z.stop():0;const q=Z.q,fb=$("#qFb");
   if(ok){Z.correct++;Z.streak++;Z.best=Math.max(Z.best,Z.streak);P().stars++;
     const pts=10+(S.timer?Math.floor(left*3):0)+Math.min(Z.streak-1,5)*5;Z.score+=pts;Z.xp+=pts;while(Z.xp>=Z.next){Z.xp-=Z.next;Z.level++;Z.next=Math.floor(Z.next*1.3);confetti(20)}
     floatPts(el||fb,"+"+pts);SFX.ok();const m=ENC[Math.floor(Math.random()*ENC.length)].replace("Math",q.spell?"Spelling":"Math");fb.className="feedback ok";fb.textContent=m;if(S.read)speak(m);if(Z.streak%5===0)confetti(15)}
-  else{Z.streak=0;SFX.no();fb.className="feedback no";const m=ok===null?`Time's up! The answer was ${show2(q.a)}`:`${OOPS[Math.floor(Math.random()*OOPS.length)]} Answer: ${show2(q.a)}`;fb.textContent=m;if(q.tip)fb.textContent+=` · ${q.tip}`;if(q.spell)speak(spellOut(q));else if(S.read)speak(m.replace(/−/g,"negative "))}
+  else{Z.streak=0;SFX.no();fb.className="feedback no";const m=ok===null?`Time's up! The answer was ${show2(q.a)}`:`${OOPS[Math.floor(Math.random()*OOPS.length)]} Answer: ${show2(q.a)}`;fb.textContent=m;if(q.tip)fb.textContent+=` · ${q.tip}`;if(q.spell&&!q.mc)speakSpell(spellOut(q))}
   stats();save();chips();setTimeout(nextQ,ok?1500:q.spell?3600:2600)}
 const show2=a=>String(a).replace(/^-/,"−");
 function endQuiz(){P().quizzes++;save();chips();show("results");const pct=Math.round(Z.correct/TOTAL*100);
@@ -1144,7 +1145,7 @@ function endQuiz(){P().quizzes++;save();chips();show("results");const pct=Math.r
   if(pct>=85)confetti(50);SFX.win()}
 $("#rAgain").onclick=()=>startQuiz(Z.focus);$("#rMenu").onclick=()=>{show("menu");renderMenu()};
 $("#quizBack").onclick=()=>{if(Z&&Z.stop)Z.stop();speechSynthesis&&speechSynthesis.cancel();show("menu");renderMenu()};
-$("#qSay").onclick=()=>Z&&Z.q&&speak(sayText(Z.q));
+$("#qSay").onclick=()=>Z&&Z.q&&Z.q.spell&&speakSpell(sayText(Z.q));
 
 /* ================= WORLDS ================= */
 const T={EMPTY:0,WALL:1,PATH:2,GRASS:3,TREE:4,WATER:5,CHEST:6,MONSTER:7,PORTAL:8,SHOP:9,GEM:10,LOCKED:11,BOSS:12,HOUSE:13,CWALL:14,CFLOOR:15,CRYSTAL:16,FLOWER:17,ROCK:18,BRICK:19,CRATE:20,CLIFF:21,DIG:22,SUSPECT:23,CLUE:24,DECO:27,BLDG:28};
@@ -1764,10 +1765,10 @@ function mathModal(e,title,sub,d,cb,extra=""){
   const q=mkQ(S.grade,S.advFocus,d);A.asked++;
   openModal(`<div class="enc">${e}</div><h3>${title}</h3><div class="mtext">${sub}</div><div class="timer" id="mTimerWrap"><i id="mTimer"></i></div>
     <button type="button" class="say" id="mSay" aria-label="Read the question">🔊</button><div class="qtext${q.text.replace(/<[^>]+>/g,"").length>26?" long":""}">${q.text}</div><div id="mAns"></div><div class="feedback" id="mFb"></div>${extra}`);
-  $("#mSay").onclick=()=>speak(sayText(q));if(S.read||q.spell)speak(sayText(q));
+  $("#mSay").onclick=()=>speakSpell(sayText(q));$("#mSay").hidden=!(q.spell&&!q.mc);if(q.spell&&!q.mc)speakSpell(sayText(q));
   const ask=askInto($("#mAns"),q,ok=>{if(stopModalTimer){stopModalTimer();stopModalTimer=null}const fb=$("#mFb");
     if(ok){fb.className="feedback ok";fb.textContent="Correct! ⭐";SFX.ok();P().stars++;save();gotRight()}
-    else{fb.className="feedback no";fb.textContent=(ok===null?"Time's up! ":"Not quite! ")+`Answer: ${show2(q.a)}`+(q.tip?` · ${q.tip}`:"");SFX.no();if(q.spell)speak(spellOut(q))}
+    else{fb.className="feedback no";fb.textContent=(ok===null?"Time's up! ":"Not quite! ")+`Answer: ${show2(q.a)}`+(q.tip?` · ${q.tip}`:"");SFX.no();if(q.spell&&!q.mc)speakSpell(spellOut(q))}
     setTimeout(()=>{closeModal();cb(!!ok)},ok?1100:q.spell?3400:2300)});
   stopModalTimer=runTimer($("#mTimer"),$("#mTimerWrap"),()=>ask.timeout());
   return ask}
@@ -1821,10 +1822,10 @@ function shop(){const w=W();const items=[["❤️ Extra Heart",20,()=>{if(A.hear
 function boss(B,onWin){let hp=B.hp,n=0;const next=()=>{n++;if(hp<=0){closeModal();setTimeout(onWin,300);return}
   const q=mkQ(S.grade,S.advFocus,harder());A.asked++;
   openModal(`<div class="enc">${B.e}</div><h3>${B.n} (${hp} HP left) — Question ${n}</h3><div class="hpbar">${Array.from({length:B.hp},(_,i)=>`<i class="${i<hp?"on":""}"></i>`).join("")}</div><div class="timer" id="mTimerWrap"><i id="mTimer"></i></div><button type="button" class="say" id="mSay" aria-label="Read the question">🔊</button><div class="qtext${q.text.replace(/<[^>]+>/g,"").length>26?" long":""}">${q.text}</div><div id="mAns"></div><div class="feedback" id="mFb"></div>`);
-  $("#mSay").onclick=()=>speak(sayText(q));if(S.read||q.spell)speak(sayText(q));
+  $("#mSay").onclick=()=>speakSpell(sayText(q));$("#mSay").hidden=!(q.spell&&!q.mc);if(q.spell&&!q.mc)speakSpell(sayText(q));
   const ask=askInto($("#mAns"),q,ok=>{if(stopModalTimer){stopModalTimer();stopModalTimer=null}const fb=$("#mFb");
     if(ok){hp--;A.right++;fb.className="feedback ok";fb.textContent=hp>0?`Hit! ${hp} HP left!`:"Final hit!";SFX.hit();P().stars++;save()}
-    else{fb.className="feedback no";fb.textContent=`${ok===null?"Time's up!":"Missed!"} You lost a heart! Answer: ${show2(q.a)}`;SFX.no();if(q.spell)speak(spellOut(q));if(hurt()){setTimeout(()=>closeModal(),900);return}}
+    else{fb.className="feedback no";fb.textContent=`${ok===null?"Time's up!":"Missed!"} You lost a heart! Answer: ${show2(q.a)}`;SFX.no();if(q.spell&&!q.mc)speakSpell(spellOut(q));if(hurt()){setTimeout(()=>closeModal(),900);return}}
     setTimeout(next,ok?1300:q.spell?3400:2300)});
   stopModalTimer=runTimer($("#mTimer"),$("#mTimerWrap"),()=>ask.timeout())};
   msg(B.e,B.n+"!",B.intro,next,"Go! ⚔️")}
